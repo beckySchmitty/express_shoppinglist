@@ -1,47 +1,31 @@
 const express = require("express");
+const ExpressError = require("./expressError");
 const ITEMS = require("./fakeDatabase");
+const Item = require("./itemclass");
 const itemRoutes = require("./itemRoutes");
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use("/items", itemRoutes)
+app.use(express.json());
+app.use("/items", itemRoutes);
 
-app.get('/', (req, res, next) => {
-    return res.json(ITEMS);
+// 404 handler
+app.use(function (req, res) {
+return new ExpressError("Page not found", 404);
 })
 
-app.get('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    return res.json(item);
-})
+// general error handler
+app.use((error, req, res, next) => {
+    let status = error.status || 500;
+    let msg = error.msg;
 
-app.post('/', (req, res, next) => {
-    const newItem = req.body;
-    items.push(newItem);
-    return res.json({added: newItem});
+    return res.status(status).json({
+        error: {msg, status}
+    })
 })
-
-app.patch('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    item.name = req.body.name;
-    item.price = req.body.price;
-    return res.json({updated: item})
-})
-
-app.delete('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    ITEMS.splice(item, 1)
-    return res.json({message: "deleted"})
-})
-
 
 app.listen(3000, () => {
     console.log("starting server on port 3000")
 })
 
-let milk = {
-    name: "milk",
-    price: "3.45"
-}
-ITEMS.push(milk)
+let milk = new Item("milk", "9999")

@@ -1,32 +1,47 @@
 const express = require("express");
 const router = new express.Router();
+const Item = require("./itemclass");
+
 
 router.get('/', (req, res, next) => {
     return res.json(ITEMS);
 })
 
 router.get('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    return res.json(item);
+    try {
+        let foundItem = Item.find(req.params.name)
+        return res.json({item:foundItem});
+    } catch(e) {
+        next(e)
+    }
 })
 
 router.post('/', (req, res, next) => {
-    const newItem = req.body;
-    items.push(newItem);
-    return res.json({added: newItem});
+    try {
+        let newItem = new Item(req.body.name, req.body.price);
+        return res.json({added: newItem}); 
+    } catch(e) {
+        next(e)
+    }
+
 })
 
 router.patch('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    item.name = req.body.name;
-    item.price = req.body.price;
-    return res.json({updated: item})
+    try {
+        let foundItem = Item.update(req.params.name, req.body);        
+        return res.json({updated:foundItem});
+    } catch(e) {
+        next(e)
+    }
 })
 
 router.delete('/:name', (req, res, next) => {
-    const item = ITEMS.find(i => i.name === req.params.name);
-    ITEMS.splice(item, 1)
-    return res.json({message: "deleted"})
+    try {
+        Item.remove(req.params.name);
+        return res.json({message:'Deleted'});
+      } catch (e) {
+        return next(e)
+      }
 })
 
 
