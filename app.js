@@ -24,8 +24,11 @@ app.use((error, req, res, next) => {
     })
 })
 
-app.listen(3000, () => {
-    console.log("starting server on port 3000")
-})
+// MOVED to server.js so I could run tests
+// app.listen(3000, () => {
+//     console.log("starting server on port 3000")
+// })
 
-let milk = new Item("milk", "9999")
+// let milk = new Item("milk", "9999")
+
+module.exports = app;
