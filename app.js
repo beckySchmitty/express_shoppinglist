@@ -10,8 +10,8 @@ app.use(express.json());
 app.use("/items", itemRoutes);
 
 // 404 handler
-app.use(function (req, res) {
-return new ExpressError("Page not found", 404);
+app.use(function (req, res, next) {
+    return new ExpressError("Page not found", 404);
 })
 
 // general error handler

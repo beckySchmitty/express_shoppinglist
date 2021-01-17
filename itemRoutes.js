@@ -1,4 +1,5 @@
 const express = require("express");
+const ExpressError = require("./expressError");
 const router = new express.Router();
 const Item = require("./itemclass");
 
@@ -17,6 +18,9 @@ router.get('/:name', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
     try {
+        if (!req.body.name) {
+            throw new ExpressError("Input must have a name", 403)
+        }
         let newItem = new Item(req.body.name, req.body.price);
         return res.json({added: newItem}); 
     } catch(e) {
@@ -37,7 +41,7 @@ router.patch('/:name', (req, res, next) => {
 router.delete('/:name', (req, res, next) => {
     try {
         Item.remove(req.params.name);
-        return res.json({message:'Deleted'});
+        return res.json({message:'deleted'});
       } catch (e) {
         return next(e)
       }
